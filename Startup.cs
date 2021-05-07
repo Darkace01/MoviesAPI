@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +34,9 @@ namespace MoviesAPI
 
             //Response Caching Filter
             services.AddResponseCaching();
+
+            //Authentication
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
             //Dependency Injection
             services.AddSingleton<IRepository, InMemoryRepository>();
@@ -79,6 +83,8 @@ namespace MoviesAPI
             app.UseRouting();
 
             app.UseResponseCaching();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
