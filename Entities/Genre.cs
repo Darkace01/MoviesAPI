@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MoviesAPI.Validations;
 
 namespace MoviesAPI.Entities
 {
@@ -6,6 +7,7 @@ namespace MoviesAPI.Entities
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "The feild ' {0} ' is required")]
+        [FirstLetterUppercase]
         public string Name { get; set; }
     }
 }
