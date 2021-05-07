@@ -29,7 +29,11 @@ namespace MoviesAPI
         {
 
             services.AddControllers();
+
+            //Dependency Injection
             services.AddSingleton<IRepository, InMemoryRepository>();
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MoviesAPI", Version = "v1" });
