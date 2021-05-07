@@ -31,6 +31,9 @@ namespace MoviesAPI
 
             services.AddControllers();
 
+            //Response Caching Filter
+            services.AddResponseCaching();
+
             //Dependency Injection
             services.AddSingleton<IRepository, InMemoryRepository>();
 
@@ -74,6 +77,8 @@ namespace MoviesAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseResponseCaching();
 
             app.UseAuthorization();
 

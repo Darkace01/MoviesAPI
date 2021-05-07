@@ -19,6 +19,7 @@ namespace MoviesAPI.Controllers
             _logger = logger;
         }
         [HttpGet]
+        [ResponseCache(Duration = 60)]
         public async Task<ActionResult<List<Genre>>> Get()
         {
             _logger.LogDebug("Getting All genres");
