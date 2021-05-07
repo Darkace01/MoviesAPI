@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MoviesAPI.Entities;
 using MoviesAPI.Services;
 
@@ -11,13 +12,16 @@ namespace MoviesAPI.Controllers
     public class GenresController : ControllerBase
     {
         private readonly IRepository _repository;
-        public GenresController(IRepository repository)
+        private readonly ILogger<GenresController> _logger;
+        public GenresController(IRepository repository, ILogger<GenresController> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
         [HttpGet]
         public async Task<ActionResult<List<Genre>>> Get()
         {
+            _logger.LogDebug("Getting All genres");
             return await _repository.GetAllGenre();
         }
 
