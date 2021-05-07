@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -41,8 +42,28 @@ namespace MoviesAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> _logger)
         {
+            app.Use(async (context, next) =>
+            {
+                using (var swapStram = new MemoryStream())
+                {
+                    var originalResponseBody = context.Response.Body;
+                    context.Response.Body = swapStram;
+
+                    await next.Invoke();
+
+                    swapStram.Seek(0, SeekOrigin.Begin);
+                    string responseBody = new StreamReader(swapStram).ReadToEnd();
+                    swapStram.Seek(0, SeekOrigin.Begin);
+
+                    await swapStram.CopyToAsync(originalResponseBody);
+                    context.Response.Body = originalResponseBody;
+
+                    _logger.LogInformation(responseBody);
+                }
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
