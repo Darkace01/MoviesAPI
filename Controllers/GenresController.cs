@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -12,38 +13,28 @@ namespace MoviesAPI.Controllers
     [ApiController]
     public class GenresController : ControllerBase
     {
-        private readonly IRepository _repository;
         private readonly ILogger<GenresController> _logger;
-        public GenresController(IRepository repository, ILogger<GenresController> logger)
+        public GenresController(ILogger<GenresController> logger)
         {
-            _repository = repository;
             _logger = logger;
         }
         [HttpGet]
-        // [ResponseCache(Duration = 60)]
-        [ServiceFilter(typeof(MyActionFilter))]
         public async Task<ActionResult<List<Genre>>> Get()
         {
             _logger.LogDebug("Getting All genres");
-            return await _repository.GetAllGenre();
+            return new List<Genre>() { new Genre() { Id = 1, Name = "Bobyi" } };
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<Genre> Get(int id)
         {
-            var genre = _repository.GetGenreById(id);
-            if (genre == null)
-            {
-                return NotFound();
-            }
-            return genre;
+            throw new NotImplementedException();
         }
 
         [HttpPost]
         public ActionResult Post([FromBody] Genre genre)
         {
-            _repository.AddGenre(genre);
-            return NoContent();
+            throw new NotImplementedException();
         }
 
         [HttpPut]
