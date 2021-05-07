@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using MoviesAPI.Filters;
 using MoviesAPI.Services;
 
 namespace MoviesAPI
@@ -30,17 +31,20 @@ namespace MoviesAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(MyExceptionFilter));
+            });
 
             //Response Caching Filter
             services.AddResponseCaching();
 
             //Authentication
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
             //Dependency Injection
             services.AddSingleton<IRepository, InMemoryRepository>();
-
+            services.AddTransient<MyActionFilter>();
 
             services.AddSwaggerGen(c =>
             {
@@ -51,25 +55,25 @@ namespace MoviesAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> _logger)
         {
-            app.Use(async (context, next) =>
-            {
-                using (var swapStram = new MemoryStream())
-                {
-                    var originalResponseBody = context.Response.Body;
-                    context.Response.Body = swapStram;
+            // app.Use(async (context, next) =>
+            // {
+            //     using (var swapStram = new MemoryStream())
+            //     {
+            //         var originalResponseBody = context.Response.Body;
+            //         context.Response.Body = swapStram;
 
-                    await next.Invoke();
+            //         await next.Invoke();
 
-                    swapStram.Seek(0, SeekOrigin.Begin);
-                    string responseBody = new StreamReader(swapStram).ReadToEnd();
-                    swapStram.Seek(0, SeekOrigin.Begin);
+            //         swapStram.Seek(0, SeekOrigin.Begin);
+            //         string responseBody = new StreamReader(swapStram).ReadToEnd();
+            //         swapStram.Seek(0, SeekOrigin.Begin);
 
-                    await swapStram.CopyToAsync(originalResponseBody);
-                    context.Response.Body = originalResponseBody;
+            //         await swapStram.CopyToAsync(originalResponseBody);
+            //         context.Response.Body = originalResponseBody;
 
-                    _logger.LogInformation(responseBody);
-                }
-            });
+            //         _logger.LogInformation(responseBody);
+            //     }
+            // });
 
             if (env.IsDevelopment())
             {
@@ -84,7 +88,7 @@ namespace MoviesAPI
 
             app.UseResponseCaching();
 
-            app.UseAuthentication();
+            // app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MoviesAPI.Entities;
+using MoviesAPI.Filters;
 using MoviesAPI.Services;
 
 namespace MoviesAPI.Controllers
@@ -19,7 +20,8 @@ namespace MoviesAPI.Controllers
             _logger = logger;
         }
         [HttpGet]
-        [ResponseCache(Duration = 60)]
+        // [ResponseCache(Duration = 60)]
+        [ServiceFilter(typeof(MyActionFilter))]
         public async Task<ActionResult<List<Genre>>> Get()
         {
             _logger.LogDebug("Getting All genres");
