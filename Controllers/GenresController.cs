@@ -34,9 +34,14 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Genre> Get(int id)
+        public async Task<ActionResult<GenreDTO>> Get(int id)
         {
-            throw new NotImplementedException();
+            var genre = await _ctx.Genres.FirstOrDefaultAsync(x => x.Id == id);
+            if (genre == null)
+            {
+                return NotFound();
+            }
+            return _mapper.Map<GenreDTO>(genre);
         }
 
         [HttpPost]
@@ -48,15 +53,27 @@ namespace MoviesAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public ActionResult Put()
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] GenreCreationDTO genreCreationDTO)
         {
+            var genre = _mapper.Map<Genre>(genreCreationDTO);
+            genre.Id = id;
+            _ctx.Entry(genre).State = EntityState.Modified;
+            await _ctx.SaveChangesAsync();
             return NoContent();
         }
 
-        [HttpDelete]
-        public ActionResult Delete()
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
+            var genre = await _ctx.Genres.FirstOrDefaultAsync(x => x.Id == id);
+            if (genre == null)
+            {
+                return NotFound();
+            }
+
+            _ctx.Remove(genre);
+            await _ctx.SaveChangesAsync();
             return NoContent();
         }
     }
