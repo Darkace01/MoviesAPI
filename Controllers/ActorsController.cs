@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MoviesAPI.Data;
 using MoviesAPI.DTOs;
 using MoviesAPI.Entities;
+using MoviesAPI.Helpers;
 
 namespace MoviesAPI.Controllers
 {
@@ -16,11 +17,14 @@ namespace MoviesAPI.Controllers
     {
         private readonly ApplicationDbContext _ctx;
         private readonly IMapper _mapper;
+        private readonly IFileStorageService _fileStorageService;
+        private readonly string containerName = "actors";
 
-        public ActorsController(ApplicationDbContext ctx, IMapper mapper)
+        public ActorsController(ApplicationDbContext ctx, IMapper mapper, IFileStorageService fileStorageService)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _fileStorageService = fileStorageService;
         }
 
         [HttpGet]
@@ -45,6 +49,10 @@ namespace MoviesAPI.Controllers
         public async Task<ActionResult> Post([FromForm] ActorCreationDTO actorCreationDTO)
         {
             var actor = _mapper.Map<Actor>(actorCreationDTO);
+            if (actorCreationDTO.Picture != null)
+            {
+                actor.Picture = await _fileStorageService.SaveFile(containerName, actorCreationDTO.Picture);
+            }
             _ctx.Add(actor);
             await _ctx.SaveChangesAsync();
             return NoContent();
