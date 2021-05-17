@@ -41,7 +41,8 @@ namespace MoviesAPI
                 options.AddDefaultPolicy(builder =>
                 {
                     var frontEndURl = Configuration.GetValue<string>("Frontend_Url");
-                    builder.WithOrigins(frontEndURl).AllowAnyMethod().AllowAnyHeader();
+                    builder.WithOrigins(frontEndURl).AllowAnyMethod().AllowAnyHeader()
+                    .WithExposedHeaders(new string[] { "totalAmountOfRecords" });
                 });
             });
 
