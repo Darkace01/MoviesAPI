@@ -61,9 +61,19 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] ActorCreationDTO actorCreationDTO)
+        public async Task<ActionResult> Put(int id, [FromForm] ActorCreationDTO actorCreationDTO)
         {
-            var actor = _mapper.Map<Actor>(actorCreationDTO);
+            var actor = await _ctx.Actors.FirstOrDefaultAsync(x => x.Id == id);
+            if (actor == null)
+            {
+                return NotFound();
+            }
+            actor = _mapper.Map<Actor>(actorCreationDTO);
+            if (actorCreationDTO.Picture != null)
+            {
+                actor.Picture = await _fileStorageService.EditFile(containerName, actorCreationDTO.Picture, actor.Picture);
+            }
+
             actor.Id = id;
             _ctx.Entry(actor).State = EntityState.Modified;
             await _ctx.SaveChangesAsync();
@@ -81,6 +91,7 @@ namespace MoviesAPI.Controllers
 
             _ctx.Remove(actor);
             await _ctx.SaveChangesAsync();
+            await _fileStorageService.DeleteFile(actor.Picture, containerName);
             return NoContent();
         }
     }
