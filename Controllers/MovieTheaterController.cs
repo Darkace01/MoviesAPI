@@ -39,7 +39,7 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(MovieTheaterCreationDTO movieCreationDTO)
+        public async Task<ActionResult> Post([FromBody] MovieTheaterCreationDTO movieCreationDTO)
         {
             var movieTheater = _mapper.Map<MovieTheater>(movieCreationDTO);
             _ctx.Add(movieTheater);
