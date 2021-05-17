@@ -28,8 +28,8 @@ namespace MoviesAPI.Controllers
             return _mapper.Map<List<MovieTheaterDTO>>(entities);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<MovieTheaterDTO>> GetAction(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MovieTheaterDTO>> Get(int id)
         {
             var movieTheater = await _ctx.MovieTheaters.FirstOrDefaultAsync(x => x.Id == id);
             if (movieTheater == null)
