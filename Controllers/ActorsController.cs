@@ -68,14 +68,11 @@ namespace MoviesAPI.Controllers
             {
                 return NotFound();
             }
-            actor = _mapper.Map<Actor>(actorCreationDTO);
+            actor = _mapper.Map(actorCreationDTO, actor);
             if (actorCreationDTO.Picture != null)
             {
                 actor.Picture = await _fileStorageService.EditFile(containerName, actorCreationDTO.Picture, actor.Picture);
             }
-
-            actor.Id = id;
-            _ctx.Entry(actor).State = EntityState.Modified;
             await _ctx.SaveChangesAsync();
             return NoContent();
         }
