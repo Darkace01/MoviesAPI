@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,7 +40,6 @@ namespace MoviesAPI
                                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                                 sqlOptions => sqlOptions.UseNetTopologySuite()));
 
-            services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
 
             services.AddCors(options =>
             {
@@ -51,7 +51,14 @@ namespace MoviesAPI
                 });
             });
 
+            services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddSingleton(provider => new MapperConfiguration(config =>
+            {
+                var geometryFactory = provider.GetRequiredService<GeometryFactory>();
+                config.AddProfile(new AutoMapperProfiles(geometryFactory));
+            }).CreateMapper());
             services.AddScoped<IFileStorageService, AzureStorageService>(); //To Save to Azure
             // services.AddScoped<IFileStorageService, InAppStorageService>();
             services.AddHttpContextAccessor();
