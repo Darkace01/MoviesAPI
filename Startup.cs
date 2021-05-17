@@ -17,6 +17,8 @@ using Microsoft.OpenApi.Models;
 using MoviesAPI.Data;
 using MoviesAPI.Filters;
 using MoviesAPI.Helpers;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 
 namespace MoviesAPI
 {
@@ -34,7 +36,10 @@ namespace MoviesAPI
         {
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                                sqlOptions => sqlOptions.UseNetTopologySuite()));
+
+            services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
 
             services.AddCors(options =>
             {
