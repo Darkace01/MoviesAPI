@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ namespace MoviesAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MovieTheaterDTO>>> Get()
         {
-            var entities = await _ctx.MovieTheaters.ToListAsync();
+            var entities = await _ctx.MovieTheaters.OrderBy(x => x.Name).ToListAsync();
             return _mapper.Map<List<MovieTheaterDTO>>(entities);
         }
 
