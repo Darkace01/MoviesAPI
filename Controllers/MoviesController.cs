@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MoviesAPI.Data;
 using MoviesAPI.DTOs;
 using MoviesAPI.Entities;
@@ -22,6 +25,18 @@ namespace MoviesAPI.Controllers
             _ctx = ctx;
             _mapper = mapper;
             _fileStorage = fileStorage;
+        }
+
+        [HttpGet("PostGet")]
+        public async Task<ActionResult<MoviePostGetDTO>> PostGet()
+        {
+            var movieTheaters = await _ctx.MovieTheaters.OrderBy(x => x.Name).ToListAsync();
+            var genres = await _ctx.Genres.OrderBy(x => x.Name).ToListAsync();
+
+            var MovieTheaterDTO = _mapper.Map<List<MovieTheaterDTO>>(movieTheaters);
+            var genreDTO = _mapper.Map<List<GenreDTO>>(genres);
+
+            return new MoviePostGetDTO() { Genres = genreDTO, MovieTheaters = MovieTheaterDTO };
         }
 
         [HttpPost]
