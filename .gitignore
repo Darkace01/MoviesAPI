@@ -463,3 +463,4 @@ bin/*
 .vscode/launch.json
 .vscode/tasks.json
 appsettings.Development.json
+appsettings.Development.json

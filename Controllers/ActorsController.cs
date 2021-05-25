@@ -36,6 +36,19 @@ namespace MoviesAPI.Controllers
             return _mapper.Map<List<ActorDTO>>(actors);
         }
 
+        [HttpPost("searchByName")]
+        public async Task<ActionResult<List<ActorMovieDTO>>> SearchByName([FromBody] string name)
+        {
+            if (string.IsNullOrEmpty(name)) { return new List<ActorMovieDTO>(); }
+
+            return await _ctx.Actors
+                    .Where(x => x.Name.Contains(name))
+                    .OrderBy(x => x.Name)
+                    .Select(x => new ActorMovieDTO { Id = x.Id, Name = x.Name, Picture = x.Picture })
+                    .Take(5)
+                    .ToListAsync();
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ActorDTO>> Get(int id)
         {
