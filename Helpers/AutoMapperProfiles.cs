@@ -69,7 +69,7 @@ namespace MoviesAPI.Helpers
             {
                 foreach (var movieTheaterMovies in movie.MovieTheatersMovies)
                 {
-                    result.Add(new MovieTheaterDTO() { Id = movieTheaterMovies.MovieTheaterId, Name = movieTheaterMovies.MovieTheater.Name });
+                    result.Add(new MovieTheaterDTO() { Id = movieTheaterMovies.MovieTheaterId, Name = movieTheaterMovies.MovieTheater.Name, Latitude = movieTheaterMovies.MovieTheater.Location.Y, Longitude = movieTheaterMovies.MovieTheater.Location.X });
                 }
             }
             return result;
