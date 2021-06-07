@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,6 +38,33 @@ namespace MoviesAPI.Controllers
             var genreDTO = _mapper.Map<List<GenreDTO>>(genres);
 
             return new MoviePostGetDTO() { Genres = genreDTO, MovieTheaters = MovieTheaterDTO };
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<HomeDTO>> Get()
+        {
+            var top = 6;
+            var today = DateTime.Today;
+
+            var upcommingReleases = await _ctx.Movies
+                        .Where(x => x.ReleaseDate > today)
+                        .OrderBy(x => x.ReleaseDate)
+                        .Take(top)
+                        .ToListAsync();
+
+            var inTheaters = await _ctx.Movies
+                        .Where(x => x.InTheaters)
+                        .OrderBy(x => x.ReleaseDate)
+                        .Take(top)
+                        .ToListAsync();
+
+            var homeDTO = new HomeDTO
+            {
+                UpcomingReleases = _mapper.Map<List<MovieDTO>>(upcommingReleases),
+                InTheaters = _mapper.Map<List<MovieDTO>>(inTheaters)
+            };
+
+            return homeDTO;
         }
 
         [HttpGet("{id}")]
