@@ -38,7 +38,8 @@ namespace MoviesAPI
 
             services.AddDbContext<ApplicationDbContext>(options =>
                                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                                sqlOptions => sqlOptions.UseNetTopologySuite()));
+                                sqlOptions => sqlOptions.UseNetTopologySuite())
+                                );
 
 
             services.AddCors(options =>

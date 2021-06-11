@@ -74,6 +74,7 @@ namespace MoviesAPI.Controllers
                         .Include(x => x.MoviesGenres).ThenInclude(x => x.Genre)
                         .Include(x => x.MovieTheatersMovies).ThenInclude(x => x.MovieTheater)
                         .Include(x => x.MoviesActors).ThenInclude(x => x.Actor)
+                        .AsSplitQuery()
                         .FirstOrDefaultAsync(x => x.Id == id);
 
             if (movie == null)
@@ -87,7 +88,7 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromForm] MovieCreationDTO movieCreationDTO)
+        public async Task<ActionResult<int>> Post([FromForm] MovieCreationDTO movieCreationDTO)
         {
             var movie = _mapper.Map<Movie>(movieCreationDTO);
 
@@ -98,7 +99,7 @@ namespace MoviesAPI.Controllers
             AnnotateActorsOrder(movie);
             _ctx.Add(movie);
             await _ctx.SaveChangesAsync();
-            return NoContent();
+            return movie.Id;
         }
 
         [HttpGet("putget/{id}")]
@@ -139,6 +140,7 @@ namespace MoviesAPI.Controllers
             var movie = await _ctx.Movies.Include(x => x.MoviesActors)
                                 .Include(x => x.MoviesGenres)
                                 .Include(x => x.MovieTheatersMovies)
+                                .AsSplitQuery()
                                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (movie == null)
