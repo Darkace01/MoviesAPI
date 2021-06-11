@@ -117,7 +117,7 @@ namespace MoviesAPI.Controllers
             return _mapper.Map<List<MovieDTO>>(movies);
         }
 
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var movie = await _ctx.Movies.FirstOrDefaultAsync(x => x.Id == id);
