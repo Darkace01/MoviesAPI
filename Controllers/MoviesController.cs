@@ -117,6 +117,21 @@ namespace MoviesAPI.Controllers
             return _mapper.Map<List<MovieDTO>>(movies);
         }
 
+        [HttpDelete("id")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var movie = await _ctx.Movies.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            _ctx.Remove(movie);
+            await _ctx.SaveChangesAsync();
+            await _fileStorage.DeleteFile(movie.Poster, container);
+            return NoContent();
+        }
+
         [HttpPost]
         public async Task<ActionResult<int>> Post([FromForm] MovieCreationDTO movieCreationDTO)
         {
