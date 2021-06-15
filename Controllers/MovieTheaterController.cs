@@ -10,6 +10,7 @@ using MoviesAPI.Entities;
 
 namespace MoviesAPI.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class MovieTheaterController : ControllerBase
     {
