@@ -52,7 +52,7 @@ namespace MoviesAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult> MakeAdmin([FromBody] string userId)
         {
-            var user = await userManager.FindByEmailAsync(userId);
+            var user = await userManager.FindByIdAsync(userId);
             await userManager.AddClaimAsync(user, new Claim("role", "admin"));
             return NoContent();
         }
@@ -61,7 +61,7 @@ namespace MoviesAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
         public async Task<ActionResult> RemoveAdmin([FromBody] string userId)
         {
-            var user = await userManager.FindByEmailAsync(userId);
+            var user = await userManager.FindByIdAsync(userId);
             await userManager.RemoveClaimAsync(user, new Claim("role", "admin"));
             return NoContent();
         }
